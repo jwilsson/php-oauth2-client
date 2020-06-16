@@ -1,0 +1,25 @@
+{
+    "name": "jwilsson/oauth2-client",
+    "description": "",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jonathan Wilsson",
+            "email": "jonathan.wilsson@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4",
+        "php-http/client-common": "^2.1",
+        "php-http/client-implementation": "^1.0",
+        "php-http/discovery": "^1.7",
+        "php-http/httplug": "^2.1",
+        "php-http/message": "^1.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "OAuth2\\": "src/"
+        }
+    }
+}
