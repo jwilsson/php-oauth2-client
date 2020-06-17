@@ -19,5 +19,5 @@ $provider = new OAuth2\Provider(
     $myClient
 );
 
-$client = $provider->getAuthenticatedClient($token); // The passed $myClient object but with authentication headers attached
+$client = $provider->getAuthenticatedClient($token); // The passed $myClient object decorated with authentication headers
 ```

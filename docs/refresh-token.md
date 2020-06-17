@@ -16,6 +16,9 @@ $provider = new OAuth2\Provider([
 
 $grant = $provider->initGrant(OAuth2\Grant\RefreshToken::class);
 
+// Fetch the refresh token from a previously requested access token
+$refreshToken = $existingToken->getRefreshToken();
+
 try {
     // $token will be an instance of OAuth2\Token
     $token = $grant->requestAccessToken($refreshToken, [

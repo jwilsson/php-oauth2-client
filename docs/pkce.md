@@ -32,7 +32,7 @@ $authUrl = $grant->getAuthorizationUrl($state, $verifier, [
 // Store the state somewhere, we'll need to verify it later when the user is redirected back to our app
 $_SESSION['state'] => $state;
 
-// Store the code verifier somewhere, we'll need to send that back to the authorization server in the next step
+// Store the code verifier somewhere, we'll need to send it back to the authorization server in the next step
 $_SESSION['verifier'] = $verifier;
 
 // Redirect the user to approve the app
@@ -64,6 +64,7 @@ $provider = new OAuth2\Provider([
 
 $grant = $provider->initGrant(OAuth2\Grant\Pkce::class);
 
+// Grab the previously generated code verifier
 $verifier = $_SESSION['verifier'];
 
 try {
