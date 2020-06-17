@@ -19,9 +19,9 @@ abstract class Grant
      * Constructor, set options and instantiate common classes.
      *
      * @param array $options Options for the provider to use.
-     * @param Psr\Http\Client\ClientInterface|null $httpClient The PSR-18 compatible HTTP client to use.
-     * @param Psr\Http\Message\RequestFactoryInterface|null $requestFactory The PSR-17 compatible request factory to use.
-     * @param Psr\Http\Message\StreamFactoryInterface|null $streamFactory The PSR-17 compatible stream factory to use.
+     * @param Psr\Http\Client\ClientInterface|null $httpClient A PSR-18 compatible HTTP client to use.
+     * @param Psr\Http\Message\RequestFactoryInterface|null $requestFactory A PSR-17 compatible request factory to use.
+     * @param Psr\Http\Message\StreamFactoryInterface|null $streamFactory A PSR-17 compatible stream factory to use.
      */
     public function __construct(
         array $options,
