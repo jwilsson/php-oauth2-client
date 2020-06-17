@@ -13,7 +13,7 @@ class RefreshToken extends Grant
      * Request an access token from the authorization server.
      *
      * @param string $refreshToken A previously received refresh token.
-     * @param array $parameters Optional. Additional parameters to pass to the authorization server.
+     * @param array $parameters Additional parameters to pass to the authorization server.
      *
      * @return OAuth2\Token
      */

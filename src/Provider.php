@@ -23,12 +23,12 @@ class Provider
     protected array $options = [];
 
     /**
-     * Constructor, instantiate set options and common classes.
+     * Constructor, set options and instantiate common classes.
      *
-     * @param array $options
-     * @param Psr\Http\Client\ClientInterface $httpClient A PSR-18 compatible HTTP client to use.
-     * @param Psr\Http\Message\RequestFactoryInterface $requestFactory A PSR-17 compatible request factory to use.
-     * @param Psr\Http\Message\StreamFactoryInterface $streamFactory A PSR-17 compatible stream factory to use.
+     * @param array $options Options for the provider to use.
+     * @param Psr\Http\Client\ClientInterface|null $httpClient The PSR-18 compatible HTTP client to use.
+     * @param Psr\Http\Message\RequestFactoryInterface|null $requestFactory The PSR-17 compatible request factory to use.
+     * @param Psr\Http\Message\StreamFactoryInterface|null $streamFactory The PSR-17 compatible stream factory to use.
      */
     public function __construct(
         array $options = [],
@@ -74,7 +74,7 @@ class Provider
      *
      * @param string $grantClass Name of the Grant class to instantiate.
      *
-     * @return OAuth2\Grant An instantiated Grant object.
+     * @return OAuth2\Grant
      */
     public function initGrant(string $grantClass): Grant
     {

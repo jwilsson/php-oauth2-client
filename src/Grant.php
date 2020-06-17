@@ -16,12 +16,12 @@ abstract class Grant
     protected array $options = [];
 
     /**
-     * Constructor, instantiate set options and common classes.
+     * Constructor, set options and instantiate common classes.
      *
-     * @param array $options
-     * @param Psr\Http\Client\ClientInterface $httpClient The PSR-18 compatible HTTP client to use.
-     * @param Psr\Http\Message\RequestFactoryInterface $requestFactory The PSR-17 compatible request factory to use.
-     * @param Psr\Http\Message\StreamFactoryInterface $streamFactory The PSR-17 compatible stream factory to use.
+     * @param array $options Options for the provider to use.
+     * @param Psr\Http\Client\ClientInterface|null $httpClient The PSR-18 compatible HTTP client to use.
+     * @param Psr\Http\Message\RequestFactoryInterface|null $requestFactory The PSR-17 compatible request factory to use.
+     * @param Psr\Http\Message\StreamFactoryInterface|null $streamFactory The PSR-17 compatible stream factory to use.
      */
     public function __construct(
         array $options,
@@ -39,7 +39,7 @@ abstract class Grant
      * Create an authorization URL.
      *
      * @param string $state A random, secret value used to protect aginst CSRF attacks.
-     * @param array $parameters Optional. Parameters to include in the authorization URL.
+     * @param array $parameters Parameters to include in the authorization URL.
      *
      * @return string
      */
@@ -87,7 +87,7 @@ abstract class Grant
     /**
      * Generate a random state value.
      *
-     * @param int $length Optional. Length of the state value.
+     * @param int $length Length of the state value.
      *
      * @return string
      */

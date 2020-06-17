@@ -29,7 +29,7 @@ class Pkce extends Grant
     /**
      * Generate a code verifier.
      *
-     * @param int $length Optional. The verifier length, must be between 43 and 128 characters long.
+     * @param int $length The verifier length, must be between 43 and 128 characters long.
      *
      * @throws \UnexpectedValueException
      *
@@ -49,7 +49,7 @@ class Pkce extends Grant
      *
      * @param string $state A random, secret value used to protect aginst CSRF attacks.
      * @param string $verifier The code verifier to generate a code challenge from.
-     * @param array $parameters Optional. Additional parameters to include in the authorization URL.
+     * @param array $parameters Additional parameters to include in the authorization URL.
      *
      * @return string
      */
@@ -68,7 +68,7 @@ class Pkce extends Grant
      *
      * @param string $code The authorization code returned from the authorization server.
      * @param string $verifier The previously created code verifier.
-     * @param array $parameters Optional. Additional parameters to pass to the authorization server.
+     * @param array $parameters Additional parameters to pass to the authorization server.
      *
      * @return OAuth2\Token
      */
