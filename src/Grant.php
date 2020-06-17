@@ -77,8 +77,8 @@ abstract class Grant
         $body = $this->streamFactory->createStream($body);
 
         $request = $this->requestFactory->createRequest('POST', $this->options['endpoints']['token_url']);
-        $request = $request->withAddedHeader('Content-Type', 'application/x-www-form-urlencoded');
-        $request = $request->withAddedHeader('Accept', 'application/json');
+        $request = $request->withHeader('Content-Type', 'application/x-www-form-urlencoded');
+        $request = $request->withHeader('Accept', 'application/json');
         $request = $request->withBody($body);
 
         return $request;
