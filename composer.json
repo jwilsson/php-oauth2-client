@@ -1,6 +1,6 @@
 {
     "name": "jwilsson/oauth2-client",
-    "description": "",
+    "description": "A modern OAuth2 Client Library.",
     "type": "library",
     "license": "MIT",
     "authors": [
