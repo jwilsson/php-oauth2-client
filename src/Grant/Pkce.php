@@ -13,12 +13,13 @@ class Pkce extends Grant
      * Create a code challenge from a code verifier.
      *
      * @param string $verifier The code verifier.
+     * @param string $hashAlgo The hash algorithm to use.
      *
      * @return string
      */
-    protected function createChallenge(string $verifier): string
+    protected function createChallenge(string $verifier, string $hashAlgo = 'sha256'): string
     {
-        $challenge = hash('sha256', $verifier, true);
+        $challenge = hash($hashAlgo, $verifier, true);
         $challenge = base64_encode($challenge);
         $challenge = strtr($challenge, '+/', '-_');
         $challenge = rtrim($challenge, '=');
