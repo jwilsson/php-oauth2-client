@@ -15,6 +15,12 @@ abstract class Grant
 {
     protected array $options = [];
 
+    protected ClientInterface $httpClient;
+
+    protected RequestFactoryInterface $requestFactory;
+
+    protected StreamFactoryInterface $streamFactory;
+
     /**
      * Constructor, set options and instantiate common classes.
      *
