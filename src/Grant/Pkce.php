@@ -36,7 +36,7 @@ class Pkce extends Grant
      *
      * @return string
      */
-    public function generateVerifier($length = 128)
+    public function generateVerifier(int $length = 128): string
     {
         if ($length < 43 || $length > 128) {
             throw new \UnexpectedValueException('Code verifier length must be between 43 and 128 characters.');

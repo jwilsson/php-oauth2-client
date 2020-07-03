@@ -18,7 +18,7 @@ class Token implements \JsonSerializable
      *
      * @param array $parameters Values from a successful access token request.
      */
-    public function __construct($parameters)
+    public function __construct(array $parameters)
     {
         if (isset($parameters['access_token'])) {
             $this->accessToken = $parameters['access_token'];
@@ -118,7 +118,7 @@ class Token implements \JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $parameters = $this->values;
 

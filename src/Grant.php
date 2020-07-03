@@ -97,7 +97,7 @@ abstract class Grant
      *
      * @return string
      */
-    public function generateState($length = 32): string
+    public function generateState(int $length = 32): string
     {
         // Length will be doubled when converting to hex
         return bin2hex(
@@ -114,7 +114,7 @@ abstract class Grant
      *
      * @return OAuth2\Token
      */
-    protected function sendTokenRequest($request): Token
+    protected function sendTokenRequest(RequestInterface $request): Token
     {
         $response = $this->httpClient->sendRequest($request);
         $body = $response->getBody()->__toString();
