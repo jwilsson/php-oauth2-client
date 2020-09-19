@@ -53,7 +53,7 @@ abstract class Grant
     {
         $parameters = array_replace([
             'client_id' => $this->options['client_id'],
-            'redirect_uri' => $this->options['redirect_uri'] ?: null,
+            'redirect_uri' => $this->options['redirect_uri'] ?? null,
             'response_type' => 'code',
             'scope' => null,
             'state' => $state,
