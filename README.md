@@ -1,6 +1,6 @@
 # PHP OAuth2 Client Library
 [![Packagist](https://img.shields.io/packagist/v/jwilsson/oauth2-client.svg)](https://packagist.org/packages/jwilsson/oauth2-client)
-[![Build Status](https://travis-ci.com/jwilsson/php-oauth2-client.svg?branch=master)](https://travis-ci.com/jwilsson/php-oauth2-client)
+![build](https://github.com/jwilsson/php-oauth2-client/workflows/build/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/jwilsson/php-oauth2-client/badge.svg?branch=master)](https://coveralls.io/r/jwilsson/php-oauth2-client?branch=master)
 
 ## Features
