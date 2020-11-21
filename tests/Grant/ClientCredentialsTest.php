@@ -24,7 +24,7 @@ class ClientCredentialsTest extends TestCase
 
         return new ClientCredentials(
             $options,
-            $httpClient ?: new Client(),
+            $httpClient ?? new Client(),
             Psr17FactoryDiscovery::findRequestFactory(),
             Psr17FactoryDiscovery::findStreamFactory()
         );

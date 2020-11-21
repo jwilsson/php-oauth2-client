@@ -24,7 +24,7 @@ class RefreshTokenTest extends TestCase
 
         return new RefreshToken(
             $options,
-            $httpClient ?: new Client(),
+            $httpClient ?? new Client(),
             Psr17FactoryDiscovery::findRequestFactory(),
             Psr17FactoryDiscovery::findStreamFactory()
         );

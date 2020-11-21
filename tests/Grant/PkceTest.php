@@ -26,7 +26,7 @@ class PkceTest extends TestCase
 
         return new Pkce(
             $options,
-            $httpClient ?: new Client(),
+            $httpClient ?? new Client(),
             Psr17FactoryDiscovery::findRequestFactory(),
             Psr17FactoryDiscovery::findStreamFactory()
         );

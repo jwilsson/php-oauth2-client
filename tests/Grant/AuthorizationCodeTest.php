@@ -26,7 +26,7 @@ class AuthorizationCodeTest extends TestCase
 
         return new AuthorizationCode(
             $options,
-            $httpClient ?: new Client(),
+            $httpClient ?? new Client(),
             Psr17FactoryDiscovery::findRequestFactory(),
             Psr17FactoryDiscovery::findStreamFactory()
         );
