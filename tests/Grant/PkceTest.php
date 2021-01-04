@@ -65,7 +65,7 @@ class PkceTest extends TestCase
         $this->assertStringContainsString('client_id=2bfe9d72a4aae8f06a31025b7536be80', $authorizationUrl);
         $this->assertStringContainsString('redirect_uri=https%3A%2F%2Fexample.com%2Fcallback', $authorizationUrl);
         $this->assertStringContainsString('response_type=code', $authorizationUrl);
-        $this->assertStringContainsString('scope=scope-1+scope-2', $authorizationUrl);
+        $this->assertStringContainsString('scope=scope-1%20scope-2', $authorizationUrl);
         $this->assertStringContainsString('state=' . $state, $authorizationUrl);
         $this->assertStringContainsString('https://provider.com/oauth2/auth', $authorizationUrl);
         $this->assertStringContainsString('code_challenge=' . $challenge, $authorizationUrl);

@@ -6,6 +6,7 @@ namespace OAuth2;
 
 use OAuth2\Grant\Exception\GrantException;
 use OAuth2\Token;
+use OAuth2\Util\QueryTrait;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
@@ -13,6 +14,8 @@ use Psr\Http\Message\StreamFactoryInterface;
 
 abstract class Grant
 {
+    use QueryTrait;
+
     protected array $options = [];
 
     protected ClientInterface $httpClient;
@@ -67,7 +70,7 @@ abstract class Grant
             $url = $url . '?';
         }
 
-        return $url . http_build_query($parameters, '', '&');
+        return $url . $this->buildQuery($parameters);
     }
 
     /**
@@ -79,7 +82,7 @@ abstract class Grant
      */
     protected function createTokenRequest(array $parameters): RequestInterface
     {
-        $body = http_build_query($parameters, '', '&');
+        $body = $this->buildQuery($parameters);
         $body = $this->streamFactory->createStream($body);
 
         $request = $this->requestFactory->createRequest('POST', $this->options['endpoints']['token_url']);

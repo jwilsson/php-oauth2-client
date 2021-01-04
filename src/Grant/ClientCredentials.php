@@ -6,9 +6,12 @@ namespace OAuth2\Grant;
 
 use OAuth2\Grant;
 use OAuth2\Token;
+use OAuth2\Util\QueryTrait;
 
 class ClientCredentials extends Grant
 {
+    use QueryTrait;
+
     /**
      * Request an access token from the authorization server.
      *
@@ -22,7 +25,7 @@ class ClientCredentials extends Grant
             'grant_type' => 'client_credentials',
         ], $parameters);
 
-        $body = http_build_query($parameters, '', '&');
+        $body = $this->buildQuery($parameters);
         $body = $this->streamFactory->createStream($body);
         $headerValue = base64_encode($this->options['client_id'] . ':' . $this->options['client_secret']);
 
