@@ -24,7 +24,7 @@ try {
     $token = $grant->requestAccessToken($refreshToken, [
         // Additional options depending on the provider
     ]);
-} catch (Exception $e) {
+} catch (OAuth2\GrantException $e) {
     var_dump($e);
 }
 ```

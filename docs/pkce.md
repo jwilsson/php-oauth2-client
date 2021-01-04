@@ -72,7 +72,7 @@ try {
     $token = $grant->requestAccessToken($code, $verifier, [
         // Additional options depending on the provider
     ]);
-} catch (Exception $e) {
+} catch (OAuth2\GrantException $e) {
     var_dump($e);
 }
 ```
