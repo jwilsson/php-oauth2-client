@@ -13,7 +13,7 @@
 * Compatible with PSR-4 autoloading.
 
 ## Requirements
-* PHP 7.4 or later.
+* PHP 8.0 or later.
 * A [PSR-18 HTTP client](https://packagist.org/providers/php-http/client-implementation).
 * A [PSR-7 implementation](https://packagist.org/providers/psr/http-message-implementation).
 
