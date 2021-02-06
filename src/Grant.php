@@ -16,14 +16,6 @@ abstract class Grant
 {
     use QueryTrait;
 
-    protected array $options = [];
-
-    protected ClientInterface $httpClient;
-
-    protected RequestFactoryInterface $requestFactory;
-
-    protected StreamFactoryInterface $streamFactory;
-
     /**
      * Constructor, set options and instantiate common classes.
      *
@@ -33,10 +25,10 @@ abstract class Grant
      * @param Psr\Http\Message\StreamFactoryInterface $streamFactory A PSR-17 compatible stream factory to use.
      */
     public function __construct(
-        array $options,
-        ClientInterface $httpClient,
-        RequestFactoryInterface $requestFactory,
-        StreamFactoryInterface $streamFactory
+        protected array $options,
+        protected ClientInterface $httpClient,
+        protected RequestFactoryInterface $requestFactory,
+        protected StreamFactoryInterface $streamFactory
     ) {
         $this->options = $options;
         $this->httpClient = $httpClient;

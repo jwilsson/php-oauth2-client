@@ -20,14 +20,6 @@ class Provider
 
     public const TOKEN_URL = '';
 
-    protected array $options = [];
-
-    protected ClientInterface $httpClient;
-
-    protected RequestFactoryInterface $requestFactory;
-
-    protected StreamFactoryInterface $streamFactory;
-
     /**
      * Constructor, set options and instantiate common classes.
      *
@@ -37,10 +29,10 @@ class Provider
      * @param Psr\Http\Message\StreamFactoryInterface|null $streamFactory A PSR-17 compatible stream factory to use.
      */
     public function __construct(
-        array $options = [],
-        ?ClientInterface $httpClient = null,
-        ?RequestFactoryInterface $requestFactory = null,
-        ?StreamFactoryInterface $streamFactory = null
+        protected array $options = [],
+        protected ?ClientInterface $httpClient = null,
+        protected ?RequestFactoryInterface $requestFactory = null,
+        protected ?StreamFactoryInterface $streamFactory = null
     ) {
         $defaults = [
             'client_id' => null,
