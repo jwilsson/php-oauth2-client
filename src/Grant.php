@@ -63,14 +63,9 @@ abstract class Grant
         ], $parameters);
 
         $url = $this->options['endpoints']['auth_url'];
+        $sep = str_contains($url, '?') ? '&' : '?';
 
-        if (strpos($url, '?') !== false) {
-            $url = $url . '&';
-        } else {
-            $url = $url . '?';
-        }
-
-        return $url . $this->buildQuery($parameters);
+        return $url . $sep . $this->buildQuery($parameters);
     }
 
     /**
