@@ -40,7 +40,7 @@ header('Location: ' . $authUrl);
 ```
 
 ## Step 2
-The second step is also very similar to the Authorization Code grant type where the user is redirected back to your `redirect_uri` after approving it. A `code` query parameter which we'll use to request an access token. A `state` query parameter which will contain the same value as we previously sent will also be included. We'll need to compare this `state` value with the one we have stored to make sure it's the correct request. We'll also need to pass the _code verifier_ from the previous step back to the authorization server.
+The second step is also very similar to the Authorization Code grant type where the user is redirected back to your `redirect_uri` after approving it. Two query parameters will be included, a `code` parameter which we'll use to request an access token and a `state` parameter which will contain the same value as we previously sent. We'll need to compare this `state` value with the one we have stored to make sure it's the correct request. We'll also need to pass the _code verifier_ from the previous step back to the authorization server.
 
 ```php
 // callback.php
