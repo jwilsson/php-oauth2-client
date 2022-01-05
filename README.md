@@ -27,5 +27,5 @@ composer require jwilsson/oauth2-client
 ## Usage
 See the [`docs`](docs/) folder for complete usage information.
 
-# Related
+## Related
 * [AutoRefreshOAuth2TokenPlugin](https://github.com/jwilsson/php-auto-refresh-oauth2-token-plugin) - A HTTPlug plugin to automatically refresh expired OAuth2 access tokens.
