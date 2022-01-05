@@ -50,7 +50,7 @@ class Pkce extends Grant
      *
      * @param string $state A random, secret value used to protect aginst CSRF attacks.
      * @param string $verifier The code verifier to generate a code challenge from.
-     * @param array $parameters Additional parameters to include in the authorization URL.
+     * @param array<string, mixed> $parameters Additional parameters to include in the authorization URL.
      *
      * @return string
      */
@@ -69,9 +69,9 @@ class Pkce extends Grant
      *
      * @param string $code The authorization code returned from the authorization server.
      * @param string $verifier The previously created code verifier.
-     * @param array $parameters Additional parameters to pass to the authorization server.
+     * @param array<string, mixed> $parameters Additional parameters to pass to the authorization server.
      *
-     * @return OAuth2\Token
+     * @return Token
      */
     public function requestAccessToken(string $code, string $verifier, array $parameters = []): Token
     {

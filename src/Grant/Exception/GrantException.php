@@ -9,14 +9,14 @@ use Psr\Http\Message\ResponseInterface;
 class GrantException extends \Exception
 {
     /**
-     * @var Psr\Http\Message\ResponseInterface
+     * @var ResponseInterface
      */
     protected ResponseInterface $response;
 
     /**
      * @param string $message The exception message.
      * @param int $code The exception code.
-     * @param Psr\Http\Message\ResponseInterface $response The response that caused the exception.
+     * @param ResponseInterface $response The response that caused the exception.
      */
     public function __construct(string $message, int $code, ResponseInterface $response)
     {
@@ -28,7 +28,7 @@ class GrantException extends \Exception
     /**
      * Retrieve the full response that caused the exception.
      *
-     * @return Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function getResponse(): ResponseInterface
     {

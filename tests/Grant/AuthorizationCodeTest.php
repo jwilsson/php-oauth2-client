@@ -10,10 +10,8 @@ use OAuth2\Grant\Exception\GrantException;
 
 class AuthorizationCodeTest extends TestCase
 {
-    protected function setupGrant(
-        $options = [],
-        $httpClient = null
-    ) {
+    protected function setupGrant(array $options = [], ?Client $httpClient = null): AuthorizationCode
+    {
         $options = array_replace([
             'client_id' => '2bfe9d72a4aae8f06a31025b7536be80',
             'client_secret' => '9d667c2b7fae7a329f32b6df17926154',
@@ -32,7 +30,7 @@ class AuthorizationCodeTest extends TestCase
         );
     }
 
-    public function testGetAuthorizationUrl()
+    public function testGetAuthorizationUrl(): void
     {
         $grant = $this->setupGrant();
         $state = $grant->generateState();
@@ -51,10 +49,10 @@ class AuthorizationCodeTest extends TestCase
         $this->assertStringContainsString('custom_param=custom_value', $authorizationUrl);
     }
 
-    public function testRequestAccessToken()
+    public function testRequestAccessToken(): void
     {
         $mockClient = new Client();
-        $response = create_response();
+        $response = create_response(); // @phpstan-ignore-line
 
         $mockClient->addResponse($response);
 
@@ -77,10 +75,10 @@ class AuthorizationCodeTest extends TestCase
         $this->assertStringContainsString('redirect_uri=https%3A%2F%2Fexample.com%2Fcallback', $body);
     }
 
-    public function testRequestAccessTokenError()
+    public function testRequestAccessTokenError(): void
     {
         $mockClient = new Client();
-        $response = create_response(400, [
+        $response = create_response(400, [ // @phpstan-ignore-line
             'error' => 'Invalid request',
         ]);
 
@@ -96,10 +94,10 @@ class AuthorizationCodeTest extends TestCase
         ]);
     }
 
-    public function testRequestAccessTokenNoToken()
+    public function testRequestAccessTokenNoToken(): void
     {
         $mockClient = new Client();
-        $response = create_response(200, [
+        $response = create_response(200, [ // @phpstan-ignore-line
             'access_token' => null,
         ]);
 

@@ -20,9 +20,9 @@ abstract class Grant
      * Constructor, set options and instantiate common classes.
      *
      * @param array $options Options for the provider to use.
-     * @param Psr\Http\Client\ClientInterface $httpClient A PSR-18 compatible HTTP client to use.
-     * @param Psr\Http\Message\RequestFactoryInterface $requestFactory A PSR-17 compatible request factory to use.
-     * @param Psr\Http\Message\StreamFactoryInterface $streamFactory A PSR-17 compatible stream factory to use.
+     * @param ClientInterface $httpClient A PSR-18 compatible HTTP client to use.
+     * @param RequestFactoryInterface $requestFactory A PSR-17 compatible request factory to use.
+     * @param StreamFactoryInterface $streamFactory A PSR-17 compatible stream factory to use.
      */
     public function __construct(
         protected array $options,
@@ -40,7 +40,7 @@ abstract class Grant
      * Create an authorization URL.
      *
      * @param string $state A random, secret value used to protect aginst CSRF attacks.
-     * @param array $parameters Parameters to include in the authorization URL.
+     * @param array<string, mixed> $parameters Parameters to include in the authorization URL.
      *
      * @return string
      */
@@ -63,9 +63,9 @@ abstract class Grant
     /**
      * Create a new token request instance.
      *
-     * @param array $parameters Parameters to pass to the authorization server.
+     * @param array<string, mixed> $parameters Parameters to pass to the authorization server.
      *
-     * @return Psr\Http\Message\RequestInterface
+     * @return RequestInterface
      */
     protected function createTokenRequest(array $parameters): RequestInterface
     {
@@ -98,20 +98,20 @@ abstract class Grant
     /**
      * Send a previously instantiated token request.
      *
-     * @param Psr\Http\Message\RequestInterface The token request object.
+     * @param RequestInterface $request The token request object.
      *
-     * @throws OAuth2\Grant\Exception\GrantException
+     * @throws GrantException
      *
-     * @return OAuth2\Token
+     * @return Token
      */
     protected function sendTokenRequest(RequestInterface $request): Token
     {
         $response = $this->httpClient->sendRequest($request);
         $body = $response->getBody()->__toString();
-        $body = json_decode($body, true);
+        $body = (array) json_decode($body, true);
 
         if (isset($body['error'])) {
-            $message = $body['error_description'] ?? $body['error'];
+            $message = strval($body['error_description'] ?? $body['error']);
 
             throw new GrantException($message, $response->getStatusCode(), $response);
         } elseif (!isset($body['access_token'])) {

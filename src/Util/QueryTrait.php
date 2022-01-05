@@ -9,7 +9,7 @@ trait QueryTrait
     /**
      * Create a query string from an array.
      *
-     * @param array $parameters Parameters to encode.
+     * @param array<string, mixed> $parameters Parameters to encode.
      *
      * @return string
      */

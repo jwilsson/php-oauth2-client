@@ -10,7 +10,7 @@ use OAuth2\Token;
 
 class ProviderTest extends TestCase
 {
-    public function testGetAuthenticatedClient()
+    public function testGetAuthenticatedClient(): void
     {
         $mockClient = new Client();
         $provider = new Provider(
@@ -23,7 +23,7 @@ class ProviderTest extends TestCase
         ]);
 
         $client = $provider->getAuthenticatedClient($token);
-        $request = create_request();
+        $request = create_request(); // @phpstan-ignore-line
 
         $client->sendRequest($request);
 
@@ -32,12 +32,21 @@ class ProviderTest extends TestCase
         $this->assertEquals('Bearer 2YotnFZFEjr1zCsicMWpAA', $request->getHeaderLine('Authorization'));
     }
 
-    public function testInitGrant()
+    public function testInitGrant(): void
     {
         $provider = new Provider([]);
 
         $grant = $provider->initGrant(AuthorizationCode::class);
 
         $this->assertInstanceOf(AuthorizationCode::class, $grant);
+    }
+
+    public function testInitGrantThrows(): void
+    {
+        $provider = new Provider([]);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $provider->initGrant(\stdClass::class);
     }
 }

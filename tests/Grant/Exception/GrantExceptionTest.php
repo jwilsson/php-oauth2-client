@@ -7,9 +7,9 @@ use OAuth2\Grant\Exception\GrantException;
 
 class GrantExceptionTest extends TestCase
 {
-    public function testGetResponse()
+    public function testGetResponse(): void
     {
-        $response = create_response(400);
+        $response = create_response(400); // @phpstan-ignore-line
 
         $exception = new GrantException('Invalid request', 400, $response);
 

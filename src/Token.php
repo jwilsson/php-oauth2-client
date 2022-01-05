@@ -106,7 +106,7 @@ class Token implements \JsonSerializable
     /**
      * Get the other values associated with this token.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getValues(): array
     {
@@ -116,7 +116,7 @@ class Token implements \JsonSerializable
     /**
      * Returns the Token data to be serialized as JSON.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {
@@ -126,7 +126,7 @@ class Token implements \JsonSerializable
     /**
      * Get the complete Token object as an associative array.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

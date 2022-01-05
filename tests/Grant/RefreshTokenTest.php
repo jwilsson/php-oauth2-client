@@ -9,10 +9,8 @@ use OAuth2\Grant\RefreshToken;
 
 class RefreshTokenTest extends TestCase
 {
-    protected function setupGrant(
-        $options = [],
-        $httpClient = null
-    ) {
+    protected function setupGrant(array $options = [], ?Client $httpClient = null): RefreshToken
+    {
         $options = array_replace([
             'client_id' => '2bfe9d72a4aae8f06a31025b7536be80',
             'client_secret' => '9d667c2b7fae7a329f32b6df17926154',
@@ -30,10 +28,10 @@ class RefreshTokenTest extends TestCase
         );
     }
 
-    public function testRequestAccessToken()
+    public function testRequestAccessToken(): void
     {
         $mockClient = new Client();
-        $response = create_response();
+        $response = create_response(); // @phpstan-ignore-line
 
         $mockClient->addResponse($response);
 

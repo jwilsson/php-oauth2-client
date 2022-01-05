@@ -7,7 +7,7 @@ use OAuth2\Token;
 
 class TokenTest extends TestCase
 {
-    public function testToken()
+    public function testToken(): void
     {
         $token = new Token([
             'access_token' => '2ff2dfe36322448c6953616740a910be57bbd4ca',
@@ -29,7 +29,7 @@ class TokenTest extends TestCase
         ]);
     }
 
-    public function testTokenExpiresIn()
+    public function testTokenExpiresIn(): void
     {
         $token = new Token([
             'expires_in' => 3600,
@@ -38,7 +38,7 @@ class TokenTest extends TestCase
         $this->assertEquals($token->getExpires(), time() + 3600);
     }
 
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
         $parameters = [
             'access_token' => '2ff2dfe36322448c6953616740a910be57bbd4ca',
@@ -52,7 +52,10 @@ class TokenTest extends TestCase
 
         $token = new Token($parameters);
 
-        $this->assertJsonStringEqualsJsonString(json_encode($token), json_encode($parameters));
+        $this->assertJsonStringEqualsJsonString(
+            (string) json_encode($token),
+            (string) json_encode($parameters)
+        );
     }
 
     public function testToArray()

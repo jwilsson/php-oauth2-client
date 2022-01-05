@@ -1,14 +1,16 @@
 <?php
+
+declare(strict_types=1);
+
 require_once __DIR__ . '/vendor/autoload.php';
 
-function create_request($method = 'GET', $url = 'http://example.com') {
+function create_request(string $method = 'GET', string $url = 'http://example.com') {
     $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
-    $request = $psr17Factory->createRequest($method, $url);
 
-    return $request;
+    return $psr17Factory->createRequest($method, $url);
 }
 
-function create_response($status = 200, $parameters = []) {
+function create_response(int $status = 200, array $parameters = []) {
     $psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
     $response = $psr17Factory->createResponse($status);
 

@@ -9,10 +9,8 @@ use OAuth2\Grant\Pkce;
 
 class PkceTest extends TestCase
 {
-    protected function setupGrant(
-        $options = [],
-        $httpClient = null
-    ) {
+    protected function setupGrant(array $options = [], ?Client $httpClient = null): Pkce
+    {
         $options = array_replace([
             'client_id' => '2bfe9d72a4aae8f06a31025b7536be80',
             'client_secret' => '9d667c2b7fae7a329f32b6df17926154',
@@ -32,7 +30,7 @@ class PkceTest extends TestCase
         );
     }
 
-    public function testGenerateVerifier()
+    public function testGenerateVerifier(): void
     {
         $grant = $this->setupGrant();
         $verifier = $grant->generateVerifier(64);
@@ -41,7 +39,7 @@ class PkceTest extends TestCase
         $this->assertEquals(strlen($verifier), 64);
     }
 
-    public function testGenerateVerifierInvalidLength()
+    public function testGenerateVerifierInvalidLength(): void
     {
         $grant = $this->setupGrant();
 
@@ -50,7 +48,7 @@ class PkceTest extends TestCase
         $verifier = $grant->generateVerifier(16);
     }
 
-    public function testGetAuthorizationUrl()
+    public function testGetAuthorizationUrl(): void
     {
         $grant = $this->setupGrant();
         $state = $grant->generateState();
@@ -73,10 +71,10 @@ class PkceTest extends TestCase
         $this->assertStringContainsString('custom_param=custom_value', $authorizationUrl);
     }
 
-    public function testRequestAccessToken()
+    public function testRequestAccessToken(): void
     {
         $mockClient = new Client();
-        $response = create_response();
+        $response = create_response(); // @phpstan-ignore-line
 
         $mockClient->addResponse($response);
 

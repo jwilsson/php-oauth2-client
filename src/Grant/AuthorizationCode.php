@@ -13,7 +13,7 @@ class AuthorizationCode extends Grant
      * Get the authorization URL.
      *
      * @param string $state A random, secret value used to protect aginst CSRF attacks.
-     * @param array $parameters Parameters to include in the authorization URL.
+     * @param array<string, mixed> $parameters Parameters to include in the authorization URL.
      *
      * @return string
      */
@@ -26,9 +26,9 @@ class AuthorizationCode extends Grant
      * Request an access token from the authorization server.
      *
      * @param string $code The authorization code returned from the authorization server.
-     * @param array $parameters Additional parameters to pass to the authorization server.
+     * @param array<string, mixed> $parameters Additional parameters to pass to the authorization server.
      *
-     * @return OAuth2\Token
+     * @return Token
      */
     public function requestAccessToken(string $code, array $parameters = []): Token
     {
