@@ -114,11 +114,21 @@ class Token implements \JsonSerializable
     }
 
     /**
-     * Returns the data to be serialized to JSON
+     * Returns the Token data to be serialized as JSON.
      *
      * @return array
      */
     public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Get the complete Token object as an associative array.
+     *
+     * @return array
+     */
+    public function toArray(): array
     {
         $parameters = $this->values;
 

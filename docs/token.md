@@ -22,6 +22,9 @@ Returns the token type associated with a token.
 ### getValues()
 Returns an array of other values associated with a token.
 
+### toArray()
+Returns the complete `OAuth2\Token` object as an associative array.
+
 ## Storing and retrieving token values
 Each `OAuth2\Token` instance also implements the [JsonSerializable](https://www.php.net/manual/en/class.jsonserializable.php) interface, allowing you to call `json_encode()` directly on an instance and get a JSON object to store the data for later use.
 

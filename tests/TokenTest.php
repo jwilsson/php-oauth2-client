@@ -54,4 +54,21 @@ class TokenTest extends TestCase
 
         $this->assertJsonStringEqualsJsonString(json_encode($token), json_encode($parameters));
     }
+
+    public function testToArray()
+    {
+        $parameters = [
+            'access_token' => '2ff2dfe36322448c6953616740a910be57bbd4ca',
+            'expires' => 1600000000,
+            'refresh_token' => '4c82f23d91a75961f4d08134fc5ad0dfe6a4c36a',
+            'scope' => 'scope-1 scope-2',
+            'token_type' => 'example',
+
+            'custom_param' => 'custom_value',
+        ];
+
+        $token = new Token($parameters);
+
+        $this->assertEqualsCanonicalizing($token->toArray(), $parameters);
+    }
 }
