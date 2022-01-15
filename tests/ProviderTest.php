@@ -1,52 +1,36 @@
 <?php
 
-namespace OAuth2\Tests;
+declare(strict_types=1);
 
 use Http\Mock\Client;
-use PHPUnit\Framework\TestCase;
 use OAuth2\Grant\AuthorizationCode;
 use OAuth2\Provider;
 use OAuth2\Token;
 
-class ProviderTest extends TestCase
-{
-    public function testGetAuthenticatedClient(): void
-    {
-        $mockClient = new Client();
-        $provider = new Provider(
-            [],
-            $mockClient
-        );
+beforeEach(function () {
+    $this->mockClient = new Client();
+    $this->provider = new Provider([], $this->mockClient);
+});
 
-        $token = new Token([
-            'access_token' => '2YotnFZFEjr1zCsicMWpAA',
-        ]);
+it('should create an authenticated client', function () {
+    $token = new Token([
+        'access_token' => 'c572c16299f42e07b03540d1d4410604f7e4471c7a30beeeaefa81972bc1c4ed',
+    ]);
 
-        $client = $provider->getAuthenticatedClient($token);
-        $request = create_request(); // @phpstan-ignore-line
+    $client = $this->provider->getAuthenticatedClient($token);
+    $client->sendRequest(create_request());
 
-        $client->sendRequest($request);
+    expect(
+        $this->mockClient->getLastRequest()->getHeaderLine('Authorization')
+    )->toBe('Bearer c572c16299f42e07b03540d1d4410604f7e4471c7a30beeeaefa81972bc1c4ed');
+});
 
-        $request = $mockClient->getLastRequest();
+it('should init a Grant class', function () {
+    $grant = $this->provider->initGrant(AuthorizationCode::class);
 
-        $this->assertEquals('Bearer 2YotnFZFEjr1zCsicMWpAA', $request->getHeaderLine('Authorization'));
-    }
+    expect($grant)->toBeInstanceOf(AuthorizationCode::class);
+});
 
-    public function testInitGrant(): void
-    {
-        $provider = new Provider([]);
-
-        $grant = $provider->initGrant(AuthorizationCode::class);
-
-        $this->assertInstanceOf(AuthorizationCode::class, $grant);
-    }
-
-    public function testInitGrantThrows(): void
-    {
-        $provider = new Provider([]);
-
-        $this->expectException(\InvalidArgumentException::class);
-
-        $provider->initGrant(\stdClass::class);
-    }
-}
+it('should throw when class does not extend from Grant', function () {
+    expect(fn () => $this->provider->initGrant(\stdClass::class))->toThrow(\InvalidArgumentException::class);
+});

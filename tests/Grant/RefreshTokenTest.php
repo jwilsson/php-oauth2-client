@@ -1,73 +1,62 @@
 <?php
 
-namespace OAuth2\Tests\Grant;
+declare(strict_types=1);
 
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Mock\Client;
-use PHPUnit\Framework\TestCase;
+use OAuth2\Grant\Exception\GrantException;
 use OAuth2\Grant\RefreshToken;
 
-class RefreshTokenTest extends TestCase
-{
-    protected function setupGrant(array $options = [], ?Client $httpClient = null): RefreshToken
-    {
-        $options = array_replace([
-            'client_id' => '2bfe9d72a4aae8f06a31025b7536be80',
-            'client_secret' => '9d667c2b7fae7a329f32b6df17926154',
-            'endpoints' => [
-                'auth_url' => 'https://provider.com/oauth2/auth',
-                'token_url' => 'https://provider.com/oauth2/token',
-            ],
-        ], $options);
+it('should request an access token', function () {
+    $client = setup_client();
+    $grant = setup_grant(RefreshToken::class, [], $client);
+    $token = $grant->requestAccessToken('6c8a7d4aa21708a432174e4cb5c6cfaf0218f5f3e52f9a76a7d95d2aaade2c83', [
+        'custom_param' => 'custom_value',
+    ]);
 
-        return new RefreshToken(
-            $options,
-            $httpClient ?? new Client(),
-            Psr17FactoryDiscovery::findRequestFactory(),
-            Psr17FactoryDiscovery::findStreamFactory()
-        );
-    }
+    $request = $client->getLastRequest();
+    $body = $request->getBody()->__toString();
 
-    public function testRequestAccessToken(): void
-    {
-        $mockClient = new Client();
-        $response = create_response(); // @phpstan-ignore-line
+    expect($request->getMethod())->toBe('POST');
+    expect($request->getUri()->__toString())->toBe('https://provider.com/oauth2/token');
+    expect($request->getHeaderLine('Authorization'))->toBe(
+        'Basic MmJmZTlkNzJhNGFhZThmMDZhMzEwMjViNzUzNmJlODA6OWQ2NjdjMmI3ZmFlN2EzMjlmMzJiNmRmMTc5MjYxNTQ='
+    );
 
-        $mockClient->addResponse($response);
+    expect($body)->toContain('grant_type=refresh_token');
+    expect($body)->toContain('custom_param=custom_value');
+});
 
-        $grant = $this->setupGrant([], $mockClient);
-        $token = $grant->requestAccessToken('6c8a7d4aa21708a432174e4cb5c6cfaf0218f5f3e52f9a76a7d95d2aaade2c83', [
-            'custom_param' => 'custom_value',
-        ]);
+it('should not send Authorization when there is no client secret', function () {
+    $client = setup_client();
+    $grant = setup_grant(RefreshToken::class, ['client_secret' => null], $client);
+    $token = $grant->requestAccessToken('6c8a7d4aa21708a432174e4cb5c6cfaf0218f5f3e52f9a76a7d95d2aaade2c83');
 
-        $requests = $mockClient->getRequests();
-        $body = $requests[0]->getBody()->__toString();
+    $request = $client->getLastRequest();
 
-        $this->assertEquals($requests[0]->getMethod(), 'POST');
-        $this->assertEquals($requests[0]->getUri(), 'https://provider.com/oauth2/token');
-        $this->assertEquals(
-            $requests[0]->getHeaderLine('Authorization'),
-            'Basic MmJmZTlkNzJhNGFhZThmMDZhMzEwMjViNzUzNmJlODA6OWQ2NjdjMmI3ZmFlN2EzMjlmMzJiNmRmMTc5MjYxNTQ='
-        );
+    expect($request->getHeaderLine('Authorization'))->toBe('');
+});
 
-        $this->assertStringContainsString('grant_type=refresh_token', $body);
-        $this->assertStringContainsString('custom_param=custom_value', $body);
-    }
+it('should throw an exception when an access token request fails', function () {
+    $response = create_response(400, [
+        'error' => 'Invalid request',
+    ]);
 
-    public function testRequestAccessTokenNoClientSecret()
-    {
-        $mockClient = new Client();
-        $response = create_response();
+    $client = setup_client($response);
+    $grant = setup_grant(RefreshToken::class, [], $client);
 
-        $mockClient->addResponse($response);
+    $refreshToken = '6c8a7d4aa21708a432174e4cb5c6cfaf0218f5f3e52f9a76a7d95d2aaade2c83';
 
-        $grant = $this->setupGrant([
-            'client_secret' => null,
-        ], $mockClient);
+    expect(fn () => $grant->requestAccessToken($refreshToken))->toThrow(GrantException::class);
+});
 
-        $token = $grant->requestAccessToken('6c8a7d4aa21708a432174e4cb5c6cfaf0218f5f3e52f9a76a7d95d2aaade2c83');
-        $requests = $mockClient->getRequests();
+it('should throw an exception when no access token is present in response', function () {
+    $response = create_response(200, [
+        'access_token' => null,
+    ]);
 
-        $this->assertEquals($requests[0]->getHeaderLine('Authorization'), null);
-    }
-}
+    $client = setup_client($response);
+    $grant = setup_grant(RefreshToken::class, [], $client);
+
+    $refreshToken = '6c8a7d4aa21708a432174e4cb5c6cfaf0218f5f3e52f9a76a7d95d2aaade2c83';
+
+    expect(fn () => $grant->requestAccessToken($refreshToken))->toThrow(GrantException::class);
+});

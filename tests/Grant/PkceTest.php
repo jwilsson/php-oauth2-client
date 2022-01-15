@@ -1,100 +1,103 @@
 <?php
 
-namespace OAuth2\Tests\Grant;
+declare(strict_types=1);
 
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Mock\Client;
-use PHPUnit\Framework\TestCase;
+use OAuth2\Grant\Exception\GrantException;
 use OAuth2\Grant\Pkce;
 
-class PkceTest extends TestCase
-{
-    protected function setupGrant(array $options = [], ?Client $httpClient = null): Pkce
-    {
-        $options = array_replace([
-            'client_id' => '2bfe9d72a4aae8f06a31025b7536be80',
-            'client_secret' => '9d667c2b7fae7a329f32b6df17926154',
-            'redirect_uri' => 'https://example.com/callback',
-            'endpoints' => [
-                // Include a query param to test appending in getAuthorizationUrl()
-                'auth_url' => 'https://provider.com/oauth2/auth?grant=pkce',
-                'token_url' => 'https://provider.com/oauth2/token',
-            ],
-        ], $options);
+beforeEach(function () {
+    $this->grantOptions = [
+        'endpoints' => [
+            // Include a query param to test appending in getAuthorizationUrl()
+            'auth_url' => 'https://provider.com/oauth2/auth?grant=pkce',
+            'token_url' => 'https://provider.com/oauth2/token',
+        ],
+    ];
+});
 
-        return new Pkce(
-            $options,
-            $httpClient ?? new Client(),
-            Psr17FactoryDiscovery::findRequestFactory(),
-            Psr17FactoryDiscovery::findStreamFactory()
-        );
-    }
+it('should generate a verifier', function () {
+    $grant = setup_grant(Pkce::class);
+    $verifier = $grant->generateVerifier(64);
 
-    public function testGenerateVerifier(): void
-    {
-        $grant = $this->setupGrant();
-        $verifier = $grant->generateVerifier(64);
+    expect($verifier)->toHaveLength(64);
+});
 
-        $this->assertIsString($verifier);
-        $this->assertEquals(strlen($verifier), 64);
-    }
+it('should throw when passed an invalid verifier length', function () {
+    $grant = setup_grant(Pkce::class);
 
-    public function testGenerateVerifierInvalidLength(): void
-    {
-        $grant = $this->setupGrant();
+    expect(fn () => $grant->generateVerifier(16))->toThrow(\UnexpectedValueException::class);
+});
 
-        $this->expectException(\UnexpectedValueException::class);
+it('should create an authorization url', function () {
+    $grant = setup_grant(Pkce::class, $this->grantOptions);
 
-        $verifier = $grant->generateVerifier(16);
-    }
+    $state = $grant->generateState();
+    $verifier = 'bb064b23223dff9b805313cdafc355acc64f1642';
+    $challenge = '5FOTHWa4QWOwjDt1TV7O19MSuYxfDyjn4PwtG5WbPxg';
 
-    public function testGetAuthorizationUrl(): void
-    {
-        $grant = $this->setupGrant();
-        $state = $grant->generateState();
-        $verifier = 'bb064b23223dff9b805313cdafc355acc64f1642';
-        $challenge = '5FOTHWa4QWOwjDt1TV7O19MSuYxfDyjn4PwtG5WbPxg';
+    $authorizationUrl = $grant->getAuthorizationUrl($state, $verifier, [
+        'custom_param' => 'custom_value',
+        'scope' => 'scope-1 scope-2',
+    ]);
 
-        $authorizationUrl = $grant->getAuthorizationUrl($state, $verifier, [
-            'custom_param' => 'custom_value',
-            'scope' => 'scope-1 scope-2',
-        ]);
+    expect($authorizationUrl)->toContain('client_id=2bfe9d72a4aae8f06a31025b7536be80');
+    expect($authorizationUrl)->toContain('redirect_uri=https%3A%2F%2Fexample.com%2Fcallback');
+    expect($authorizationUrl)->toContain('response_type=code');
+    expect($authorizationUrl)->toContain('scope=scope-1%20scope-2');
+    expect($authorizationUrl)->toContain('state=' . $state);
+    expect($authorizationUrl)->toContain('https://provider.com/oauth2/auth');
+    expect($authorizationUrl)->toContain('code_challenge=' . $challenge);
+    expect($authorizationUrl)->toContain('code_challenge_method=S256');
+    expect($authorizationUrl)->toContain('custom_param=custom_value');
+});
 
-        $this->assertStringContainsString('client_id=2bfe9d72a4aae8f06a31025b7536be80', $authorizationUrl);
-        $this->assertStringContainsString('redirect_uri=https%3A%2F%2Fexample.com%2Fcallback', $authorizationUrl);
-        $this->assertStringContainsString('response_type=code', $authorizationUrl);
-        $this->assertStringContainsString('scope=scope-1%20scope-2', $authorizationUrl);
-        $this->assertStringContainsString('state=' . $state, $authorizationUrl);
-        $this->assertStringContainsString('https://provider.com/oauth2/auth', $authorizationUrl);
-        $this->assertStringContainsString('code_challenge=' . $challenge, $authorizationUrl);
-        $this->assertStringContainsString('code_challenge_method=S256', $authorizationUrl);
-        $this->assertStringContainsString('custom_param=custom_value', $authorizationUrl);
-    }
+it('should request an access token', function () {
+    $client = setup_client();
+    $grant = setup_grant(Pkce::class, $this->grantOptions, $client);
 
-    public function testRequestAccessToken(): void
-    {
-        $mockClient = new Client();
-        $response = create_response(); // @phpstan-ignore-line
+    $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
+    $verifier = 'bb064b23223dff9b805313cdafc355acc64f1642';
+    $token = $grant->requestAccessToken($code, $verifier, [
+        'custom_param' => 'custom_value',
+    ]);
 
-        $mockClient->addResponse($response);
+    $request = $client->getLastRequest();
+    $body = $request->getBody()->__toString();
 
-        $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
-        $verifier = 'bb064b23223dff9b805313cdafc355acc64f1642';
-        $grant = $this->setupGrant([], $mockClient);
-        $token = $grant->requestAccessToken($code, $verifier, [
-            'custom_param' => 'custom_value',
-        ]);
+    expect($request->getMethod())->toBe('POST');
+    expect($request->getUri()->__toString())->toBe('https://provider.com/oauth2/token');
 
-        $requests = $mockClient->getRequests();
-        $body = $requests[0]->getBody()->__toString();
+    expect($body)->toContain('client_id=2bfe9d72a4aae8f06a31025b7536be80');
+    expect($body)->toContain('code=' . $code);
+    expect($body)->toContain('code_verifier=' . $verifier);
+    expect($body)->toContain('grant_type=authorization_code');
+    expect($body)->toContain('redirect_uri=https%3A%2F%2Fexample.com%2Fcallback');
+});
 
-        $this->assertEquals('POST', $requests[0]->getMethod());
-        $this->assertEquals('https://provider.com/oauth2/token', $requests[0]->getUri());
+it('should throw an exception when an access token request fails', function () {
+    $response = create_response(400, [
+        'error' => 'Invalid request',
+    ]);
 
-        $this->assertStringContainsString('client_id=2bfe9d72a4aae8f06a31025b7536be80', $body);
-        $this->assertStringContainsString('code=' . $code, $body);
-        $this->assertStringContainsString('code_verifier=' . $verifier, $body);
-        $this->assertStringContainsString('grant_type=authorization_code', $body);
-        $this->assertStringContainsString('redirect_uri=https%3A%2F%2Fexample.com%2Fcallback', $body);
-    }
-}
+    $client = setup_client($response);
+    $grant = setup_grant(Pkce::class, $this->grantOptions, $client);
+
+    $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
+    $verifier = 'bb064b23223dff9b805313cdafc355acc64f1642';
+
+    expect(fn () => $grant->requestAccessToken($code, $verifier))->toThrow(GrantException::class);
+});
+
+it('should throw an exception when no access token is present in response', function () {
+    $response = create_response(200, [
+        'access_token' => null,
+    ]);
+
+    $client = setup_client($response);
+    $grant = setup_grant(Pkce::class, $this->grantOptions, $client);
+
+    $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
+    $verifier = 'bb064b23223dff9b805313cdafc355acc64f1642';
+
+    expect(fn () => $grant->requestAccessToken($code, $verifier))->toThrow(GrantException::class);
+});

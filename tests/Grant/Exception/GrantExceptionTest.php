@@ -1,18 +1,12 @@
 <?php
 
-namespace OAuth2\Tests\Grant\Exception;
+declare(strict_types=1);
 
-use PHPUnit\Framework\TestCase;
 use OAuth2\Grant\Exception\GrantException;
 
-class GrantExceptionTest extends TestCase
-{
-    public function testGetResponse(): void
-    {
-        $response = create_response(400); // @phpstan-ignore-line
+it('should contain the full response that caused the exception', function () {
+    $response = create_response(400);
+    $exception = new GrantException('Invalid request', 400, $response);
 
-        $exception = new GrantException('Invalid request', 400, $response);
-
-        $this->assertSame($response, $exception->getResponse());
-    }
-}
+    expect($exception->getResponse())->toBe($response);
+});

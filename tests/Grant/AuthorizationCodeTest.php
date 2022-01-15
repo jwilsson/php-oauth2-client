@@ -1,115 +1,72 @@
 <?php
 
-namespace OAuth2\Tests\Grant;
+declare(strict_types=1);
 
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Mock\Client;
-use PHPUnit\Framework\TestCase;
 use OAuth2\Grant\AuthorizationCode;
 use OAuth2\Grant\Exception\GrantException;
 
-class AuthorizationCodeTest extends TestCase
-{
-    protected function setupGrant(array $options = [], ?Client $httpClient = null): AuthorizationCode
-    {
-        $options = array_replace([
-            'client_id' => '2bfe9d72a4aae8f06a31025b7536be80',
-            'client_secret' => '9d667c2b7fae7a329f32b6df17926154',
-            'redirect_uri' => 'https://example.com/callback',
-            'endpoints' => [
-                'auth_url' => 'https://provider.com/oauth2/auth',
-                'token_url' => 'https://provider.com/oauth2/token',
-            ],
-        ], $options);
+it('should create an authorization url', function () {
+    $grant = setup_grant(AuthorizationCode::class);
 
-        return new AuthorizationCode(
-            $options,
-            $httpClient ?? new Client(),
-            Psr17FactoryDiscovery::findRequestFactory(),
-            Psr17FactoryDiscovery::findStreamFactory()
-        );
-    }
+    $state = $grant->generateState();
+    $authorizationUrl = $grant->getAuthorizationUrl($state, [
+        'custom_param' => 'custom_value',
+        'scope' => 'scope-1 scope-2',
+    ]);
 
-    public function testGetAuthorizationUrl(): void
-    {
-        $grant = $this->setupGrant();
-        $state = $grant->generateState();
+    expect($authorizationUrl)->toContain('client_id=2bfe9d72a4aae8f06a31025b7536be80');
+    expect($authorizationUrl)->toContain('redirect_uri=https%3A%2F%2Fexample.com%2Fcallback');
+    expect($authorizationUrl)->toContain('response_type=code');
+    expect($authorizationUrl)->toContain('scope=scope-1%20scope-2');
+    expect($authorizationUrl)->toContain('state=' . $state);
+    expect($authorizationUrl)->toContain('https://provider.com/oauth2/auth');
+    expect($authorizationUrl)->toContain('custom_param=custom_value');
+});
 
-        $authorizationUrl = $grant->getAuthorizationUrl($state, [
-            'custom_param' => 'custom_value',
-            'scope' => 'scope-1 scope-2',
-        ]);
+it('should request an access token', function () {
+    $client = setup_client();
+    $grant = setup_grant(AuthorizationCode::class, [], $client);
 
-        $this->assertStringContainsString('client_id=2bfe9d72a4aae8f06a31025b7536be80', $authorizationUrl);
-        $this->assertStringContainsString('redirect_uri=https%3A%2F%2Fexample.com%2Fcallback', $authorizationUrl);
-        $this->assertStringContainsString('response_type=code', $authorizationUrl);
-        $this->assertStringContainsString('scope=scope-1%20scope-2', $authorizationUrl);
-        $this->assertStringContainsString('state=' . $state, $authorizationUrl);
-        $this->assertStringContainsString('https://provider.com/oauth2/auth', $authorizationUrl);
-        $this->assertStringContainsString('custom_param=custom_value', $authorizationUrl);
-    }
+    $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
+    $token = $grant->requestAccessToken($code, [
+        'custom_param' => 'custom_value',
+    ]);
 
-    public function testRequestAccessToken(): void
-    {
-        $mockClient = new Client();
-        $response = create_response(); // @phpstan-ignore-line
+    $request = $client->getLastRequest();
+    $body = $request->getBody()->__toString();
 
-        $mockClient->addResponse($response);
+    expect($request->getMethod())->toBe('POST');
+    expect($request->getUri()->__toString())->toBe('https://provider.com/oauth2/token');
 
-        $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
-        $grant = $this->setupGrant([], $mockClient);
-        $token = $grant->requestAccessToken($code, [
-            'custom_param' => 'custom_value',
-        ]);
+    expect($body)->toContain('client_id=2bfe9d72a4aae8f06a31025b7536be80');
+    expect($body)->toContain('client_secret=9d667c2b7fae7a329f32b6df17926154');
+    expect($body)->toContain('code=' . $code);
+    expect($body)->toContain('grant_type=authorization_code');
+    expect($body)->toContain('redirect_uri=https%3A%2F%2Fexample.com%2Fcallback');
+});
 
-        $request = $mockClient->getLastRequest();
-        $body = $request->getBody()->__toString();
+it('should throw an exception when an access token request fails', function () {
+    $response = create_response(400, [
+        'error' => 'Invalid request',
+    ]);
 
-        $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals('https://provider.com/oauth2/token', $request->getUri());
+    $client = setup_client($response);
+    $grant = setup_grant(AuthorizationCode::class, [], $client);
 
-        $this->assertStringContainsString('client_id=2bfe9d72a4aae8f06a31025b7536be80', $body);
-        $this->assertStringContainsString('client_secret=9d667c2b7fae7a329f32b6df17926154', $body);
-        $this->assertStringContainsString('code=' . $code, $body);
-        $this->assertStringContainsString('grant_type=authorization_code', $body);
-        $this->assertStringContainsString('redirect_uri=https%3A%2F%2Fexample.com%2Fcallback', $body);
-    }
+    $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
 
-    public function testRequestAccessTokenError(): void
-    {
-        $mockClient = new Client();
-        $response = create_response(400, [ // @phpstan-ignore-line
-            'error' => 'Invalid request',
-        ]);
+    expect(fn () => $grant->requestAccessToken($code))->toThrow(GrantException::class);
+});
 
-        $mockClient->addResponse($response);
+it('should throw an exception when no access token is present in response', function () {
+    $response = create_response(200, [
+        'access_token' => null,
+    ]);
 
-        $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
-        $grant = $this->setupGrant([], $mockClient);
+    $client = setup_client($response);
+    $grant = setup_grant(AuthorizationCode::class, [], $client);
 
-        $this->expectException(GrantException::class);
+    $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
 
-        $grant->requestAccessToken($code, [
-            'custom_param' => 'custom_value',
-        ]);
-    }
-
-    public function testRequestAccessTokenNoToken(): void
-    {
-        $mockClient = new Client();
-        $response = create_response(200, [ // @phpstan-ignore-line
-            'access_token' => null,
-        ]);
-
-        $mockClient->addResponse($response);
-
-        $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
-        $grant = $this->setupGrant([], $mockClient);
-
-        $this->expectException(GrantException::class);
-
-        $grant->requestAccessToken($code, [
-            'custom_param' => 'custom_value',
-        ]);
-    }
-}
+    expect(fn () => $grant->requestAccessToken($code))->toThrow(GrantException::class);
+});

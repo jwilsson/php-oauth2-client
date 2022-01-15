@@ -1,56 +1,49 @@
 <?php
 
-namespace OAuth2\Tests\Grant;
+declare(strict_types=1);
 
-use Http\Discovery\Psr17FactoryDiscovery;
-use Http\Mock\Client;
-use PHPUnit\Framework\TestCase;
 use OAuth2\Grant\ClientCredentials;
+use OAuth2\Grant\Exception\GrantException;
 
-class ClientCredentialsTest extends TestCase
-{
-    protected function setupGrant(array $options = [], ?Client $httpClient = null): ClientCredentials
-    {
-        $options = array_replace([
-            'client_id' => '2bfe9d72a4aae8f06a31025b7536be80',
-            'client_secret' => '9d667c2b7fae7a329f32b6df17926154',
-            'endpoints' => [
-                'auth_url' => 'https://provider.com/oauth2/auth',
-                'token_url' => 'https://provider.com/oauth2/token',
-            ],
-        ], $options);
+it('should request an access token', function () {
+    $client = setup_client();
+    $grant = setup_grant(ClientCredentials::class, [], $client);
 
-        return new ClientCredentials(
-            $options,
-            $httpClient ?? new Client(),
-            Psr17FactoryDiscovery::findRequestFactory(),
-            Psr17FactoryDiscovery::findStreamFactory()
-        );
-    }
+    $token = $grant->requestAccessToken([
+        'custom_param' => 'custom_value',
+    ]);
 
-    public function testRequestAccessToken(): void
-    {
-        $mockClient = new Client();
-        $response = create_response(); // @phpstan-ignore-line
+    $request = $client->getLastRequest();
+    $body = $request->getBody()->__toString();
 
-        $mockClient->addResponse($response);
+    expect($request->getMethod())->toBe('POST');
+    expect($request->getUri()->__toString())->toBe('https://provider.com/oauth2/token');
+    expect($request->getHeaderLine('Authorization'))->toBe(
+        'Basic MmJmZTlkNzJhNGFhZThmMDZhMzEwMjViNzUzNmJlODA6OWQ2NjdjMmI3ZmFlN2EzMjlmMzJiNmRmMTc5MjYxNTQ='
+    );
 
-        $grant = $this->setupGrant([], $mockClient);
-        $token = $grant->requestAccessToken([
-            'custom_param' => 'custom_value',
-        ]);
+    expect($body)->toContain('grant_type=client_credentials');
+    expect($body)->toContain('custom_param=custom_value');
+});
 
-        $requests = $mockClient->getRequests();
-        $body = $requests[0]->getBody()->__toString();
+it('should throw an exception when an access token request fails', function () {
+    $response = create_response(400, [
+        'error' => 'Invalid request',
+    ]);
 
-        $this->assertEquals($requests[0]->getMethod(), 'POST');
-        $this->assertEquals($requests[0]->getUri(), 'https://provider.com/oauth2/token');
-        $this->assertEquals(
-            $requests[0]->getHeaderLine('Authorization'),
-            'Basic MmJmZTlkNzJhNGFhZThmMDZhMzEwMjViNzUzNmJlODA6OWQ2NjdjMmI3ZmFlN2EzMjlmMzJiNmRmMTc5MjYxNTQ='
-        );
+    $client = setup_client($response);
+    $grant = setup_grant(ClientCredentials::class, [], $client);
 
-        $this->assertStringContainsString('grant_type=client_credentials', $body);
-        $this->assertStringContainsString('custom_param=custom_value', $body);
-    }
-}
+    expect(fn () => $grant->requestAccessToken())->toThrow(GrantException::class);
+});
+
+it('should throw an exception when no access token is present in response', function () {
+    $response = create_response(200, [
+        'access_token' => null,
+    ]);
+
+    $client = setup_client($response);
+    $grant = setup_grant(ClientCredentials::class, [], $client);
+
+    expect(fn () => $grant->requestAccessToken())->toThrow(GrantException::class);
+});
