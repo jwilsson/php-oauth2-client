@@ -29,11 +29,15 @@ class RefreshToken extends Grant
 
         $body = $this->buildQuery($parameters);
         $body = $this->streamFactory->createStream($body);
-        $headerValue = base64_encode($this->options['client_id'] . ':' . $this->options['client_secret']);
 
         $request = $this->createTokenRequest($parameters);
-        $request = $request->withAddedHeader('Authorization', 'Basic ' . $headerValue);
         $request = $request->withBody($body);
+
+        if (isset($this->options['client_secret'])) {
+            $headerValue = base64_encode($this->options['client_id'] . ':' . $this->options['client_secret']);
+
+            $request = $request->withAddedHeader('Authorization', 'Basic ' . $headerValue);
+        }
 
         return $this->sendTokenRequest($request);
     }

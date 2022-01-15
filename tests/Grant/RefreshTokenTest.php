@@ -55,4 +55,21 @@ class RefreshTokenTest extends TestCase
         $this->assertStringContainsString('grant_type=refresh_token', $body);
         $this->assertStringContainsString('custom_param=custom_value', $body);
     }
+
+    public function testRequestAccessTokenNoClientSecret()
+    {
+        $mockClient = new Client();
+        $response = create_response();
+
+        $mockClient->addResponse($response);
+
+        $grant = $this->setupGrant([
+            'client_secret' => null,
+        ], $mockClient);
+
+        $token = $grant->requestAccessToken('6c8a7d4aa21708a432174e4cb5c6cfaf0218f5f3e52f9a76a7d95d2aaade2c83');
+        $requests = $mockClient->getRequests();
+
+        $this->assertEquals($requests[0]->getHeaderLine('Authorization'), null);
+    }
 }
