@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 env:
   COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PHP_CS_FIXER_IGNORE_ENV: 'true' # TODO: Remove when php-cs-fixer supports PHP 8.2
 
 jobs:
   build:
