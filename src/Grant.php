@@ -90,8 +90,10 @@ abstract class Grant
     public function generateState(int $length = 32): string
     {
         // Length will be doubled when converting to hex
+        $length = max(1, intval($length / 2));
+
         return bin2hex(
-            random_bytes($length / 2)
+            random_bytes($length)
         );
     }
 
