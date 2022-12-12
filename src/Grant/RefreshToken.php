@@ -27,11 +27,7 @@ class RefreshToken extends Grant
             'refresh_token' => $refreshToken,
         ], $parameters);
 
-        $body = $this->buildQuery($parameters);
-        $body = $this->streamFactory->createStream($body);
-
         $request = $this->createTokenRequest($parameters);
-        $request = $request->withBody($body);
 
         if (isset($this->options['client_secret'])) {
             $headerValue = base64_encode($this->options['client_id'] . ':' . $this->options['client_secret']);
