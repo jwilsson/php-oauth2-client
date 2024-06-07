@@ -20,6 +20,10 @@ $provider = new MyProvider([
     'redirect_uri' => 'MY_REDIRECT_URI',
 
     // Passing 'endpoints' here will override the values specified in the provider's constants
+    'endpoints' => [
+        'auth_url' => 'AUTH_URL_OVERRIDE',
+        'token_url' => 'TOKEN_URL_OVERRIDE',
+    ],
 ]);
 
 $grant = $provider->initGrant(OAuth2\Grant\AuthorizationCode::class);
