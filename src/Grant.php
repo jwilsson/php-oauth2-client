@@ -17,18 +17,38 @@ abstract class Grant
     use QueryTrait;
 
     /**
+     *  @var array<string, mixed> Options for the provider to use
+     */
+    protected array $options;
+
+    /**
+     * @var ClientInterface A PSR-18 compatible HTTP client to use.
+     */
+    protected ClientInterface $httpClient;
+
+    /**
+     * @var RequestFactoryInterface A PSR-17 compatible request factory to use.
+     */
+    protected RequestFactoryInterface $requestFactory;
+
+    /**
+     * @var StreamFactoryInterface A PSR-17 compatible stream factory to use.
+     */
+    protected StreamFactoryInterface $streamFactory;
+
+    /**
      * Constructor, set options and instantiate common classes.
      *
-     * @param array $options Options for the provider to use.
+     * @param array<string, mixed> $options Options for the provider to use.
      * @param ClientInterface $httpClient A PSR-18 compatible HTTP client to use.
      * @param RequestFactoryInterface $requestFactory A PSR-17 compatible request factory to use.
      * @param StreamFactoryInterface $streamFactory A PSR-17 compatible stream factory to use.
      */
     public function __construct(
-        protected array $options,
-        protected ClientInterface $httpClient,
-        protected RequestFactoryInterface $requestFactory,
-        protected StreamFactoryInterface $streamFactory
+        array $options,
+        ClientInterface $httpClient,
+        RequestFactoryInterface $requestFactory,
+        StreamFactoryInterface $streamFactory
     ) {
         $this->options = $options;
         $this->httpClient = $httpClient;

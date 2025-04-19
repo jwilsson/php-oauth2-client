@@ -20,9 +20,24 @@ class Provider
     public const AUTH_URL = '';
     public const TOKEN_URL = '';
 
+    /**
+     *  @var array<string, mixed> Options for the provider to use
+     */
     protected array $options;
+
+    /**
+     * @var ClientInterface A PSR-18 compatible HTTP client to use.
+     */
     protected ClientInterface $httpClient;
+
+    /**
+     * @var RequestFactoryInterface A PSR-17 compatible request factory to use.
+     */
     protected RequestFactoryInterface $requestFactory;
+
+    /**
+     * @var StreamFactoryInterface A PSR-17 compatible stream factory to use.
+     */
     protected StreamFactoryInterface $streamFactory;
 
     /**

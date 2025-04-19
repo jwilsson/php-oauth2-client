@@ -6,17 +6,40 @@ namespace OAuth2;
 
 class Token implements \JsonSerializable
 {
+    /**
+     * @var string The access token associated with this token.
+     */
     private string $accessToken = '';
+
+    /**
+     * @var int The expiry time associated with this token.
+     */
     private int $expires = 0;
+
+    /**
+     * @var string The refresh token associated with this token.
+     */
     private string $refreshToken = '';
+
+    /**
+     * @var string The scope associated with this token.
+     */
     private string $scope = '';
+
+    /**
+     * @var string The token type associated with this token.
+     */
     private string $tokenType = '';
+
+    /**
+     * @var array<string, mixed> The other values associated with this token.
+     */
     private array $values = [];
 
     /**
      * Constructor, set token properties.
      *
-     * @param array $parameters Values from a successful access token request.
+     * @param array<string, mixed> $parameters Values from a successful access token request.
      */
     public function __construct(array $parameters)
     {
