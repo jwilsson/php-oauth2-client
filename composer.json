@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "php-http/client-common": "^2.1",
         "php-http/client-implementation": "^1.0",
         "php-http/discovery": "^1.7",
