@@ -6,7 +6,7 @@ $finder = PhpCsFixer\Finder::create()
     ->append(['.php-cs-fixer.dist.php']);
 
 $rules = [
-    '@PSR12' => true,
+    '@PER-CS' => true,
 ];
 
 return (new PhpCsFixer\Config())

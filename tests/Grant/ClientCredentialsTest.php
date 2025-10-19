@@ -19,7 +19,7 @@ it('should request an access token', function () {
     expect($request->getMethod())->toBe('POST');
     expect($request->getUri()->__toString())->toBe('https://provider.com/oauth2/token');
     expect($request->getHeaderLine('Authorization'))->toBe(
-        'Basic MmJmZTlkNzJhNGFhZThmMDZhMzEwMjViNzUzNmJlODA6OWQ2NjdjMmI3ZmFlN2EzMjlmMzJiNmRmMTc5MjYxNTQ='
+        'Basic MmJmZTlkNzJhNGFhZThmMDZhMzEwMjViNzUzNmJlODA6OWQ2NjdjMmI3ZmFlN2EzMjlmMzJiNmRmMTc5MjYxNTQ=',
     );
 
     expect($body)->toContain('grant_type=client_credentials');
@@ -34,7 +34,7 @@ it('should throw an exception when an access token request fails', function () {
     $client = setup_client($response);
     $grant = setup_grant(ClientCredentials::class, [], $client);
 
-    expect(fn () => $grant->requestAccessToken())->toThrow(GrantException::class);
+    expect(fn() => $grant->requestAccessToken())->toThrow(GrantException::class);
 });
 
 it('should throw an exception when no access token is present in response', function () {
@@ -45,5 +45,5 @@ it('should throw an exception when no access token is present in response', func
     $client = setup_client($response);
     $grant = setup_grant(ClientCredentials::class, [], $client);
 
-    expect(fn () => $grant->requestAccessToken())->toThrow(GrantException::class);
+    expect(fn() => $grant->requestAccessToken())->toThrow(GrantException::class);
 });

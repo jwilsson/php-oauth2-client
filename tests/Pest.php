@@ -35,7 +35,7 @@ function setup_grant(string $grant, array $options = [], ?Client $client = null)
         $options,
         $client ?? setup_client(),
         Psr17FactoryDiscovery::findRequestFactory(),
-        Psr17FactoryDiscovery::findStreamFactory()
+        Psr17FactoryDiscovery::findStreamFactory(),
     );
 }
 
@@ -60,10 +60,10 @@ function create_response(int $status = 200, array $parameters = []): ResponseInt
     ], $parameters);
 
     $body = json_encode(
-        array_filter($parameters)
+        array_filter($parameters),
     );
 
     return $response->withBody(
-        $psr17Factory->createStream($body)
+        $psr17Factory->createStream($body),
     );
 }

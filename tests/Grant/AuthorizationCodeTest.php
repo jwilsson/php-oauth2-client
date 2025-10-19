@@ -55,7 +55,7 @@ it('should throw an exception when an access token request fails', function () {
 
     $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
 
-    expect(fn () => $grant->requestAccessToken($code))->toThrow(GrantException::class);
+    expect(fn() => $grant->requestAccessToken($code))->toThrow(GrantException::class);
 });
 
 it('should throw an exception when no access token is present in response', function () {
@@ -68,5 +68,5 @@ it('should throw an exception when no access token is present in response', func
 
     $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
 
-    expect(fn () => $grant->requestAccessToken($code))->toThrow(GrantException::class);
+    expect(fn() => $grant->requestAccessToken($code))->toThrow(GrantException::class);
 });

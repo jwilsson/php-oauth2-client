@@ -52,7 +52,7 @@ class Provider
         array $options = [],
         ?ClientInterface $httpClient = null,
         ?RequestFactoryInterface $requestFactory = null,
-        ?StreamFactoryInterface $streamFactory = null
+        ?StreamFactoryInterface $streamFactory = null,
     ) {
         $defaults = [
             'client_id' => null,
@@ -100,12 +100,12 @@ class Provider
             $this->options,
             $this->httpClient,
             $this->requestFactory,
-            $this->streamFactory
+            $this->streamFactory,
         );
 
         if (!($grantObject instanceof Grant)) {
             throw new \InvalidArgumentException(
-                sprintf('Class "%s" does not inherit from OAuth2\Grant', $grantClass)
+                sprintf('Class "%s" does not inherit from OAuth2\Grant', $grantClass),
             );
         }
 

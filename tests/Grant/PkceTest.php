@@ -25,7 +25,7 @@ it('should generate a verifier', function () {
 it('should throw when passed an invalid verifier length', function () {
     $grant = setup_grant(Pkce::class);
 
-    expect(fn () => $grant->generateVerifier(16))->toThrow(\UnexpectedValueException::class);
+    expect(fn() => $grant->generateVerifier(16))->toThrow(\UnexpectedValueException::class);
 });
 
 it('should create an authorization url', function () {
@@ -85,7 +85,7 @@ it('should throw an exception when an access token request fails', function () {
     $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
     $verifier = 'bb064b23223dff9b805313cdafc355acc64f1642';
 
-    expect(fn () => $grant->requestAccessToken($code, $verifier))->toThrow(GrantException::class);
+    expect(fn() => $grant->requestAccessToken($code, $verifier))->toThrow(GrantException::class);
 });
 
 it('should throw an exception when no access token is present in response', function () {
@@ -99,5 +99,5 @@ it('should throw an exception when no access token is present in response', func
     $code = '5694d08a2e53ffcae0c3103e5ad6f6076abd960eb1f8a56577040bc1028f702b';
     $verifier = 'bb064b23223dff9b805313cdafc355acc64f1642';
 
-    expect(fn () => $grant->requestAccessToken($code, $verifier))->toThrow(GrantException::class);
+    expect(fn() => $grant->requestAccessToken($code, $verifier))->toThrow(GrantException::class);
 });

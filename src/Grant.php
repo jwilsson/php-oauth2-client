@@ -48,7 +48,7 @@ abstract class Grant
         array $options,
         ClientInterface $httpClient,
         RequestFactoryInterface $requestFactory,
-        StreamFactoryInterface $streamFactory
+        StreamFactoryInterface $streamFactory,
     ) {
         $this->options = $options;
         $this->httpClient = $httpClient;
@@ -113,7 +113,7 @@ abstract class Grant
         $length = max(1, intval($length / 2));
 
         return bin2hex(
-            random_bytes($length)
+            random_bytes($length),
         );
     }
 

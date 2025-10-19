@@ -42,7 +42,7 @@ it('should return all data as an associative array', function () {
 
     $this->assertEqualsCanonicalizing(
         $token->toArray(),
-        $this->parameters
+        $this->parameters,
     );
 });
 
@@ -52,6 +52,6 @@ it('should serialize all data to JSON', function () {
 
     $this->assertJsonStringEqualsJsonString(
         (string) json_encode($token),
-        (string) json_encode($this->parameters)
+        (string) json_encode($this->parameters),
     );
 });
