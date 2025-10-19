@@ -9,7 +9,7 @@ use OAuth2\Grant;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-function setup_client(ResponseInterface $response = null): Client
+function setup_client(?ResponseInterface $response = null): Client
 {
     $response ??= create_response();
     $client = new Client();
